@@ -11,6 +11,7 @@ import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
 import { ROLE, STATUS } from '@shared/src/constants/user.constant';
 import type { Response, Request } from 'express';
+import { StringValue } from 'ms';
 
 @Injectable()
 export class AuthService {
@@ -23,11 +24,11 @@ export class AuthService {
     const payload = { sub: userId, email };
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.ACCESS_TOKEN_SECRET || 'ACCESS_SECRET',
-      expiresIn: '15m',
+      expiresIn: (process.env.ACCESS_TOKEN_EXPIRED as StringValue) || '15m',
     });
     const refreshToken = this.jwtService.sign(payload, {
       secret: process.env.REFRESH_TOKEN_SECRET || 'REFRESH_SECRET',
-      expiresIn: '7d',
+      expiresIn: (process.env.REFRESH_TOKEN_EXPIRED as StringValue) || '7d',
     });
     return { accessToken, refreshToken };
   }
@@ -37,7 +38,8 @@ export class AuthService {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge:
+        (Number(process.env.REFRESH_TOKEN_EXPIRED) || 7) * 24 * 60 * 60 * 1000, // 7 days
     });
   }
 
