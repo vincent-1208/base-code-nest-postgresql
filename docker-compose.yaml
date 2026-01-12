@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydb # Optional: creates a default database on initialization
+    ports:
+      - '5432:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data # Ensures data persistence
+
+volumes:
+  db_data:
+
+# docker compose -f docker-compose.yaml up -d
