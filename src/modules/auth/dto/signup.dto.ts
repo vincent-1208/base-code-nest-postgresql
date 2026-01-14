@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsString, MinLength, Matches } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class SignUpDto {
@@ -12,11 +12,14 @@ export class SignUpDto {
 
   @ApiProperty()
   @IsString()
-  @MinLength(6)
+  @MinLength(8)
+  @Matches(/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).*$/, {
+    message: 'Password too weak',
+  })
   password: string;
 
   @ApiProperty()
   @IsString()
-  @MinLength(6)
+  @MinLength(8)
   passwordConfirm: string;
 }
